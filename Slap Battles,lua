@@ -1,0 +1,144 @@
+repeat 
+    task.wait()
+until game:IsLoaded()
+
+--// Library
+
+local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
+--// SaveManager
+
+local SaveManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/SaveManager.lua"))()
+
+--// InterfaceManager
+
+local InterfaceManager = loadstring(game:HttpGet("https://raw.githubusercontent.com/dawid-scripts/Fluent/master/Addons/InterfaceManager.lua"))()
+
+if game.PlaceId == 6403373529 or game.PlaceId == 9015014224  or game.PlaceId == 9015014224 then
+    if game:IsLoaded() then
+        local Bypass;
+        Bypass = hookmetamethod(game, "__namecall", function(Method, ...) 
+            if getnamecallmethod() == "FireServer" and Method == game.ReplicatedStorage.Ban then
+                return
+            elseif getnamecallmethod() == "FireServer" and Method == game.ReplicatedStorage.AdminGUI then
+                return
+            elseif getnamecallmethod() == "FireServer" and Method == game.ReplicatedStorage.WalkSpeedChanged then
+                return
+            end
+            return Bypass(Method, ...)
+        end)
+    end
+end
+
+--// Variables
+
+local Player = game.Players.LocalPlayer
+local Character = Player.Character
+local Humanoid = Character.Humanoid
+local HumanoidRootPart = Character.HumanoidRootPart
+
+--// Window
+
+local Window = Fluent:CreateWindow({
+    Title = "TroXer Hub | Slap Battles Version: " .. Fluent.Version,
+    SubTitle = "By ArteeSo",
+    TabWidth = 160,
+    Size = UDim2.fromOffset(580, 460),
+    Acrylic = true, -- The blur may be detectable, setting this to false disables blur entirely
+    Theme = "Dark",
+    MinimizeKey = Enum.KeyCode.LeftControl -- Used when theres no MinimizeKeybind
+})
+
+--// Tabs
+
+local Tabs = {
+    Home = Window:AddTab({
+        Title = "Home",
+        Icon = "home"
+    }),
+    Combat = Window:AddTab({
+        Title = "Combat",
+        Icon = "crosshair"
+    }),
+    Visual = Window:AddTab({
+        Title = "Visual",
+        Icon = "eye"
+    }),
+    Player = Window:AddTab({
+        Title = "Player",
+        Icon = "contact"
+    }),
+    Settings = Window:AddTab({ 
+        Title = "Settings", 
+        Icon = "settings" 
+    }),
+}
+
+
+--// Options
+
+local Options = Fluent.Options
+
+--// Functions
+
+function Notify(Title, Content, SubContent, Duration)
+    Fluent:Notify({
+        Title = Title or "Error",
+        Content = Content or "Error",
+        SubContent = SubContent or "You find the error then dm our server!",
+        Duration = Duration or 1
+    })
+end
+
+do
+
+local WalkSlider = Tabs.Player:AddSlider("Slider", {
+    Title = "Walk Speed",
+    Description = "Changes the player's walkspeed!",
+    Default = 16,
+    Min = 16,
+    Max = 1000,
+    Rounding = 1,
+    Callback = function(Value)
+        Notify("Configuration", "Speed", "Speed was changed to ".. Value)
+        Humanoid.WalkSpeed = Value
+    end
+})
+
+local WalkSlider = Tabs.Player:AddSlider("Slider", {
+    Title = "Jump Power",
+    Description = "Changes the player's JumpPower!",
+    Default = 16,
+    Min = 16,
+    Max = 1000,
+    Rounding = 1,
+    Callback = function(Value)
+        Notify("Configuration", "Jump Power", "Power was changed to ".. Value)
+        Humanoid.JumpPower = Value
+    end
+})
+
+local GravitySlider = Tabs.Player:AddSlider("Slider", {
+    Title = "Gravity",
+    Description = "Changes player's gravity!",
+    Defualt = 50,
+    Min = 0,
+    Max = 1000,
+    Rounding = 1,
+    Callback = function(Value)
+        Notify("Configuration", "Gravity", "Gravity was changed to ".. Value, 1)
+        game.Workspace.Gravity = Value
+    end
+})
+
+end
+
+SaveManager:SetLibrary(Fluent)
+InterfaceManager:SetLibrary(Fluent)
+SaveManager:IgnoreThemeSettings()
+SaveManager:SetIgnoreIndexes({})
+InterfaceManager:SetFolder("FluentScriptHub")
+SaveManager:SetFolder("FluentScriptHub/Slap-Battles")
+
+InterfaceManager:BuildInterfaceSection(Tabs.Settings)
+SaveManager:BuildConfigSection(Tabs.Settings)
